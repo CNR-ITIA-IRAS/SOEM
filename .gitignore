@@ -1,5 +1,7 @@
 build*
 install
 *~
+*.kdev4
+kdev4/
 /doc/latex
 /doc/html
