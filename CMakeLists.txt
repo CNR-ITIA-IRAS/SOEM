@@ -9,6 +9,7 @@ endif()
 
 set(SOEM_INCLUDE_INSTALL_DIR include/soem)
 set(SOEM_LIB_INSTALL_DIR lib)
+set(CMAKE_BUILD_TYPE Release)
 
 if(WIN32)
   set(OS "win32")
@@ -39,7 +40,7 @@ elseif(${CMAKE_SYSTEM_NAME} MATCHES "rtems")
   set(SOEM_LIB_INSTALL_DIR ${LIB_DIR})
 endif()
 
-message("OS is ${OS}")
+message("System name ${CMAKE_SYSTEM_NAME} OS is ${OS}")
 
 file(GLOB SOEM_SOURCES soem/*.c)
 file(GLOB OSAL_SOURCES osal/${OS}/*.c)
