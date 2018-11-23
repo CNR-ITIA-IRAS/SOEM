@@ -95,6 +95,7 @@ int ecx_setupnic(ecx_portt *port, const char *ifname, int secondary)
    struct ifreq ifr;
    struct sockaddr_ll sll;
    int *psock;
+   pthread_mutexattr_t mutexattr;
 
    rval = 0;
    if (secondary)
@@ -123,9 +124,11 @@ int ecx_setupnic(ecx_portt *port, const char *ifname, int secondary)
    }
    else
    {
-      pthread_mutex_init(&(port->getindex_mutex), NULL);
-      pthread_mutex_init(&(port->tx_mutex)      , NULL);
-      pthread_mutex_init(&(port->rx_mutex)      , NULL);
+      pthread_mutexattr_init(&mutexattr);
+      pthread_mutexattr_setprotocol(&mutexattr  , PTHREAD_PRIO_INHERIT);
+      pthread_mutex_init(&(port->getindex_mutex), &mutexattr);
+      pthread_mutex_init(&(port->tx_mutex)      , &mutexattr);
+      pthread_mutex_init(&(port->rx_mutex)      , &mutexattr);
       port->sockhandle        = -1;
       port->lastidx           = 0;
       port->redstate          = ECT_RED_NONE;
@@ -278,8 +281,12 @@ int ecx_outframe(ecx_portt *port, int idx, int stacknumber)
       stack = &(port->redport->stack);
    }
    lp = (*stack->txbuflength)[idx];
-   rval = send(*stack->sock, (*stack->txbuf)[idx], lp, 0);
    (*stack->rxbufstat)[idx] = EC_BUF_TX;
+   rval = send(*stack->sock, (*stack->txbuf)[idx], lp, 0);
+   if (rval == -1)
+   {
+      (*stack->rxbufstat)[idx] = EC_BUF_EMPTY;
+   }
 
    return rval;
 }
@@ -311,9 +318,12 @@ int ecx_outframe_red(ecx_portt *port, int idx)
       /* rewrite MAC source address 1 to secondary */
       ehp->sa1 = htons(secMAC[1]);
       /* transmit over secondary socket */
-      send(port->redport->sockhandle, &(port->txbuf2), port->txbuflength2 , 0);
-      pthread_mutex_unlock( &(port->tx_mutex) );
       port->redport->rxbufstat[idx] = EC_BUF_TX;
+      if (send(port->redport->sockhandle, &(port->txbuf2), port->txbuflength2 , 0) == -1)
+      {
+         port->redport->rxbufstat[idx] = EC_BUF_EMPTY;
+      }
+      pthread_mutex_unlock( &(port->tx_mutex) );
    }
 
    return rval;
