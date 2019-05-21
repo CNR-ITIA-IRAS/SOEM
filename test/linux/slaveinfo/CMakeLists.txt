@@ -6,8 +6,8 @@ target_link_libraries(slaveinfo soem)
 
 MESSAGE("Xenomai_FOUND: ${Xenomai_FOUND}")
 if(Xenomai_FOUND)
-  target_link_libraries(slaveinfo ${Xenomai_POSIX_LIBRARIES})
-  MESSAGE("Linking: ${Xenomai_POSIX_LIBRARIES}")
+  target_link_libraries(slaveinfo ${XENOMAI_POSIX_LIBRARIES})
+  MESSAGE("Linking: ${XENOMAI_POSIX_LIBRARIES}")
   MESSAGE("LDFLAGS:   ${OS_LDFLAGS}")
   set_target_properties(slaveinfo PROPERTIES LINK_FLAGS ${OS_LDFLAGS} )
 
