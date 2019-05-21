@@ -1,12 +1,14 @@
 
+MESSAGE("***SLAVE INFO*** ")
 set(SOURCES slaveinfo.c)
 add_executable(slaveinfo ${SOURCES})
 target_link_libraries(slaveinfo soem)
 
+MESSAGE("Xenomai_FOUND: ${Xenomai_FOUND}")
 if(Xenomai_FOUND)
   target_link_libraries(slaveinfo ${Xenomai_POSIX_LIBRARIES})
   MESSAGE("Linking: ${Xenomai_POSIX_LIBRARIES}")
-  MESSAGE("LDFLAGS: ${OS_LDFLAGS}")
+  MESSAGE("LDFLAGS:   ${OS_LDFLAGS}")
   set_target_properties(slaveinfo PROPERTIES LINK_FLAGS ${OS_LDFLAGS} )
 
 elseif(WIN32)
