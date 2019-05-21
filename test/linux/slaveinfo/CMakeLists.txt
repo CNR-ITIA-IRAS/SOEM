@@ -5,6 +5,8 @@ target_link_libraries(slaveinfo soem)
 
 if(Xenomai_FOUND)
   target_link_libraries(slaveinfo ${Xenomai_POSIX_LIBRARIES})
+  MESSAGE("Linking: ${Xenomai_POSIX_LIBRARIES}")
+  MESSAGE("LDFLAGS: ${OS_LDFLAGS}")
   set_target_properties(slaveinfo PROPERTIES LINK_FLAGS ${OS_LDFLAGS} )
 
 elseif(WIN32)
