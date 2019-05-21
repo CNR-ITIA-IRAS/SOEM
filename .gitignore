@@ -5,3 +5,7 @@ install
 kdev4/
 /doc/latex
 /doc/html
+tags
+*.user
+*.user*
+

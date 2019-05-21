@@ -252,7 +252,7 @@ typedef struct ec_group
    int16            Ebuscurrent;
    /** if >0 block use of LRW in processdata */
    uint8            blockLRW;
-   /** IO segegments used */
+   /** IO segments used */
    uint16           nsegments;
    /** 1st input segment */
    uint16           Isegment;
@@ -287,9 +287,9 @@ typedef struct ec_eepromSM
    uint16  PhStart;
    uint16  Plength;
    uint8   Creg;
-   uint8   Sreg;       /* dont care */
+   uint8   Sreg;       /* don't care */
    uint8   Activate;
-   uint8   PDIctrl;      /* dont care */
+   uint8   PDIctrl;      /* don't care */
 } ec_eepromSMt;
 
 /** record to store rxPDO and txPDO table from eeprom */
@@ -377,7 +377,8 @@ typedef struct PACKED ec_PDOdesc
 PACKED_END
 
 /** Context structure , referenced by all ecx functions*/
-typedef struct ecx_context
+typedef struct ecx_context ecx_contextt;
+struct ecx_context
 {
    /** port reference, may include red_port */
    ecx_portt      *port;
@@ -421,7 +422,9 @@ typedef struct ecx_context
    ec_eepromFMMUt *eepFMMU;
    /** registered FoE hook */
    int            (*FOEhook)(uint16 slave, int packetnumber, int datasize);
-} ecx_contextt;
+   /** registered EoE hook */
+   int            (*EOEhook)(ecx_contextt * context, uint16 slave, void * eoembx);
+};
 
 #ifdef EC_VER1
 /** global struct to hold default master context */
@@ -514,6 +517,7 @@ int ecx_receive_processdata_group(ecx_contextt *context, uint8 group, int timeou
 int ecx_send_processdata(ecx_contextt *context);
 int ecx_send_overlap_processdata(ecx_contextt *context);
 int ecx_receive_processdata(ecx_contextt *context, int timeout);
+int ecx_send_processdata_group(ecx_contextt *context, uint8 group);
 
 #ifdef __cplusplus
 }
